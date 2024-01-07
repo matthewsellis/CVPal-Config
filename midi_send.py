@@ -2,6 +2,22 @@
 """Example script to transmit a sequence of MIDI messages over time.  Runs from
 the command line, no GUI.  Uses the rtmidi package for output.
 """
+
+"""
+        CVpal:
+
+          Product ID: 0x05e4
+          Vendor ID: 0x16c0
+          Version: 1.00
+          Serial Number: CVpal 1.0
+          Speed: Up to 1.5 Mb/s
+          Manufacturer: Mutable Instruments
+          Location ID: 0x01100000 / 1
+          Current Available (mA): 500
+          Current Required (mA): 30
+          Extra Operating Current (mA): 0
+"""
+
 ################################################################
 # Written in 2018-2021 by Garth Zeglin <garthz@cmu.edu>
 
