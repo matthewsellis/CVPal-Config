@@ -1,4 +1,4 @@
-﻿Note,MIDI note number,Key number (Organ),Key number (Piano),Note names (English),Note names (German),Frequency (Equal tuning at 440 Hz)
+Note,MIDI note number,Key number (Organ),Key number (Piano),Note names (English),Note names (German),Frequency (Equal tuning at 440 Hz)
 G#9,top of MIDI tuning range,,,G#9/Ab9,gis’’’’’’/ges’’’’’’,13289.75
 G9,127,,,G9,g’’’’’’,12543.85
 F#9,126,,,F#9/Gb9,fis’’’’’’/ges’’’’’’,11839.82

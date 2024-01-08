@@ -27,19 +27,37 @@ Play a C6 note (MIDI note 84). The target voltage is 4.000V. Use B4 or C#5 to ma
 Technical note: to get maximum accuracy, it is recommended to temporarily connect a 100k resistor between the output being calibrated and ground. By doing so, the output protection resistor is taken into account. Not doing so might cause tuning errors of up to 10 cts at either ends of the scale.
 
 """
-# read in midi notes
-
 from csv import DictReader
-# open file in read mode
-with open("midi.csv", 'r') as f:
-     
-    dict_reader = DictReader(f)
-     
-    list_of_dict = list(dict_reader)
-   
-    print(list_of_dict)
+import serial
+
+# csv file names
+cfg_csv  = "Config_Params.csv"
+midi_csv = "MIDI.csv"
+
+# USB Device Names
+midi_usb = "CVPal"
+dmm_port = "/dev/tty.usbserial-110"
+
+# Read Config file into Dictionary
+with open(cfg_csv, 'r') as cfg_file:
+    cfg_dict = DictReader(cfg_file)
+    cfg_list = list(cfg_dict)
+    print(cfg_list)
+
+# Read MIDI file into Dictionary
+with open(midi_csv, 'r') as midi_file:
+    midi_dict = DictReader(midi_file)
+    midi_list = list(midi_dict)
+    print(midi_list)
 
 # connect meter
+dmm = serial.Serial(
+    port=dmm_port,
+    baudrate=115200,
+    parity=serial.PARITY_NONE,
+    stopbits=serial.STOPBITS_ONE,
+    bytesize=serial.EIGHTBITS
+)
 
 # connect cvpal
 
