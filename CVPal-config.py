@@ -27,6 +27,17 @@ Play a C6 note (MIDI note 84). The target voltage is 4.000V. Use B4 or C#5 to ma
 Technical note: to get maximum accuracy, it is recommended to temporarily connect a 100k resistor between the output being calibrated and ground. By doing so, the output protection resistor is taken into account. Not doing so might cause tuning errors of up to 10 cts at either ends of the scale.
 
 """
+# read in midi notes
+
+from csv import DictReader
+# open file in read mode
+with open("midi.csv", 'r') as f:
+     
+    dict_reader = DictReader(f)
+     
+    list_of_dict = list(dict_reader)
+   
+    print(list_of_dict)
 
 # connect meter
 
