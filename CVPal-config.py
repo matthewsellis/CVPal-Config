@@ -42,13 +42,20 @@ dmm_port = "/dev/tty.usbserial-110"
 with open(cfg_csv, 'r') as cfg_file:
     cfg_dict = DictReader(cfg_file)
     cfg_list = list(cfg_dict)
-    print(cfg_list)
+
+print(cfg_list)
 
 # Read MIDI file into Dictionary
-with open(midi_csv, 'r') as midi_file:
-    midi_dict = DictReader(midi_file)
-    midi_list = list(midi_dict)
-    print(midi_list)
+with open(midi_csv, 'r') as f:
+    midi_csv_list = [[val.strip() for val in r.split(",")] for r in f.readlines()]
+
+(_, *header), *data = midi_csv_list
+midi_dict = {}
+for row in data:
+    key, *values = row   
+    midi_dict[key] = {key: value for key, value in zip(header, values)}
+
+print(midi_dict)
 
 # connect meter
 dmm = serial.Serial(
