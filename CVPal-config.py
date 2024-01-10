@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 #https://pichenettes.github.io/mutable-instruments-diy-archive/cvpal/manual/
 
 """Calibration
@@ -28,7 +30,10 @@ Technical note: to get maximum accuracy, it is recommended to temporarily connec
 
 """
 from csv import DictReader
-import serial
+import serial, time, platform
+
+# For documentation on python-rtmidi: https://pypi.org/project/python-rtmidi/
+import rtmidi
 
 # csv file names
 cfg_csv  = "Config_Params.csv"
@@ -43,7 +48,7 @@ with open(cfg_csv, 'r') as cfg_file:
     cfg_dict = DictReader(cfg_file)
     cfg_list = list(cfg_dict)
 
-print(cfg_list)
+#print(cfg_list)
 
 # Read MIDI file into Dictionary
 with open(midi_csv, 'r') as f:
@@ -55,18 +60,67 @@ for row in data:
     key, *values = row   
     midi_dict[key] = {key: value for key, value in zip(header, values)}
 
-print(midi_dict)
+#print(midi_dict)
+
+for cfg_test in cfg_list:
+    test_note = cfg_test["Note"]
+    print( "Test Note: " + test_note  + " (" + midi_dict[test_note]["MIDI note number"] + ")")
+
 
 # connect meter
-dmm = serial.Serial(
-    port=dmm_port,
-    baudrate=115200,
-    parity=serial.PARITY_NONE,
-    stopbits=serial.STOPBITS_ONE,
-    bytesize=serial.EIGHTBITS
-)
+try:
+    dmm = serial.Serial(
+        port=dmm_port,
+        baudrate=115200,
+        parity=serial.PARITY_NONE,
+        stopbits=serial.STOPBITS_ONE,
+        bytesize=serial.EIGHTBITS
+    )
+except:
+    print("ERROR - failed to connect to DMM")
+    exit(1)
+
+# assuming DMM USB serial port was found, open it and get the DMM identity as confirmation
+dmm.isOpen()
+
+dmm_msg  = "*IDN?"
+dmm_msg += '\n'
+dmm.write(dmm_msg.encode())
+
+dmm_resp = ''
+# let's wait point one second before reading output (let's give device time to answer)
+time.sleep(0.1)
+while dmm.inWaiting() > 0:
+    dmm_resp += dmm.read(1).decode()
+            
+if dmm_resp != '':
+    print( "DMM Model " + dmm_resp )
+else:
+    print( "ERROR - DMM Failed to respond to request - exiting")
+    exit(2)
 
 # connect cvpal
+# Initialize the MIDI output system and read the currently available ports.
+midi_out = rtmidi.MidiOut()
+for idx, name in enumerate(midi_out.get_ports()):
+    if midi_usb in name:
+        print("Found preferred MIDI output device %d: %s" % (idx, name))
+        midi_out.open_port(idx)
+        break
+    else:
+        print("Ignoring unselected MIDI device: ", name)
+
+if not midi_out.is_port_open():
+    if platform.system() == 'Windows':
+        print("Virtual MIDI outputs are not currently supported on Windows, see python-rtmidi documentation.")
+    else:
+        print("Creating virtual MIDI output.")
+        midi_out.open_virtual_port(args.midi)
+    
+if not midi_out.is_port_open():
+    print("ERROR - No MIDI device opened, exiting.")
+    exit(1)
+
 
 # loop through notes
 
